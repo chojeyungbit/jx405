@@ -23,7 +23,12 @@
 
     UserDTO userDTO = userController.auth(username, password);
 
-    System.out.println(userDTO);
+    if (userDTO == null) {
+        // 특정 주소로 다시 이동하는 방법
+        response.sendRedirect("/day0209/index.jsp");
+    } else {
+        response.sendRedirect("/day0209/printList.jsp");
+    }
 %>
 </body>
 </html>
