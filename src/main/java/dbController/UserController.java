@@ -1,5 +1,6 @@
 package dbController;
 
+import dbConn.ConnectionMaker;
 import model.UserDTO;
 
 import java.sql.Connection;
@@ -10,8 +11,8 @@ import java.sql.SQLException;
 public class UserController {
     private Connection connection;
 
-    public UserController(Connection connection) {
-        this.connection = connection;
+    public UserController(ConnectionMaker connectionMaker) {
+        this.connection = connectionMaker.makeConnection();
     }
 
     public boolean insert(UserDTO userDTO) {
@@ -93,7 +94,7 @@ public class UserController {
         }
     }
 
-    public UserDTO selectOne(int id){
+    public UserDTO selectOne(int id) {
         UserDTO u = null;
         String query = "SELECT * FROM `user` WHERE `id` = ?";
         try {
@@ -101,7 +102,7 @@ public class UserController {
             pstmt.setInt(1, id);
 
             ResultSet resultSet = pstmt.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 u = new UserDTO();
                 u.setId(resultSet.getInt("id"));
                 u.setNickname(resultSet.getString("nickname"));

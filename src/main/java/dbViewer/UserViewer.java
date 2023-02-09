@@ -1,6 +1,7 @@
 package dbViewer;
 
 import dbConn.ConnectionMaker;
+import dbConn.MySqlConnectionMaker;
 import dbController.UserController;
 import model.UserDTO;
 import util.ScannerUtil;
@@ -49,8 +50,9 @@ public class UserViewer {
 
         message = "사용하실 닉네임을 입력해주세요.";
         u.setNickname(ScannerUtil.nextLine(SCANNER, message));
+        ConnectionMaker connectionMaker = new MySqlConnectionMaker();
 
-        UserController userController = new UserController(connection);
+        UserController userController = new UserController(connectionMaker);
         if (!userController.insert(u)) {
             System.out.println("중복된 아이디입니다.");
             message = "새로운 아이디로 가입을 시도하시겠습니까? Y/N";
@@ -69,8 +71,9 @@ public class UserViewer {
 
         message = "비밀번호를 입력해주세요.";
         String password = ScannerUtil.nextLine(SCANNER, message);
+        ConnectionMaker connectionMaker = new MySqlConnectionMaker();
 
-        UserController userController = new UserController(connection);
+        UserController userController = new UserController(connectionMaker);
 
         logIn = userController.auth(username, password);
 
@@ -118,8 +121,9 @@ public class UserViewer {
 
         message = "기존 비밀번호를 입력해주세요.";
         String oldPassword = ScannerUtil.nextLine(SCANNER, message);
+        ConnectionMaker connectionMaker = new MySqlConnectionMaker();
 
-        UserController userController = new UserController(connection);
+        UserController userController = new UserController(connectionMaker);
 
         if (userController.auth(logIn.getUsername(), oldPassword) != null) {
             logIn.setNickname(newNickname);
@@ -138,8 +142,9 @@ public class UserViewer {
         if (yesNo.equalsIgnoreCase("Y")) {
             message = "비밀번호를 입력해주세요.";
             String password = ScannerUtil.nextLine(SCANNER, message);
+            ConnectionMaker connectionMaker = new MySqlConnectionMaker();
 
-            UserController userController = new UserController(connection);
+            UserController userController = new UserController(connectionMaker);
 
             if (userController.auth(logIn.getUsername(), password) != null) {
                 userController.delete(logIn.getId());
