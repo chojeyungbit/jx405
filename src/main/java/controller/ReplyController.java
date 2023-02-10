@@ -1,5 +1,6 @@
 package controller;
 
+import connector.ConnectionMaker;
 import model.ReplyDTO;
 
 import java.sql.Connection;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 public class ReplyController {
     private Connection connection;
 
-    public ReplyController(Connection connection) {
-        this.connection = connection;
+    public ReplyController(ConnectionMaker connectionMaker) {
+        this.connection = connectionMaker.makeConnection();
     }
 
     public void insert(ReplyDTO replyDTO) {

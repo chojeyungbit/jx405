@@ -1,5 +1,6 @@
 package controller;
 
+import connector.ConnectionMaker;
 import model.BoardDTO;
 
 import java.sql.Connection;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 public class BoardController {
     private Connection connection;
 
-    public BoardController(Connection connection) {
-        this.connection = connection;
+    public BoardController(ConnectionMaker connectionMaker) {
+        this.connection = connectionMaker.makeConnection();
     }
 
     public void insert(BoardDTO boardDTO) {
