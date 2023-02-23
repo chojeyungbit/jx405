@@ -1,69 +1,122 @@
 package controller;
 
+import connector.ConnectionMaker;
 import model.UserDTO;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserController {
-    private ArrayList<UserDTO> list;
-    private int nextId;
+    private Connection connection;
 
-    public UserController() {
-        list = new ArrayList<>();
-        nextId = 1;
+    public UserController(ConnectionMaker connectionMaker) {
+        this.connection = connectionMaker.makeConnection();
     }
 
-    public void insert(UserDTO userDTO) {
-        userDTO.setId(nextId++);
-        list.add(userDTO);
-    }
+    public boolean insert(UserDTO userDTO) {
+        String query = "INSERT INTO `user`(`username`, `password`, `nickname`) VALUES(?, ?, ?)";
 
-    public UserDTO selectById(int id) {
-        for (UserDTO u : list) {
-            if (u.getId() == id) {
-                return new UserDTO(u);
-            }
-        }
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, userDTO.getUsername());
+            pstmt.setString(2, userDTO.getPassword());
+            pstmt.setString(3, userDTO.getNickname());
 
-        return null;
-    }
+            pstmt.executeUpdate();
 
-    public void update(UserDTO userDTO) {
-        list.set(list.indexOf(userDTO), userDTO);
-    }
-
-    public void delete(int id) {
-        UserDTO u = new UserDTO();
-        u.setId(id);
-        list.remove(u);
-    }
-
-    public boolean validateUsername(String username) {
-        if (username.equalsIgnoreCase("X")) {
+            pstmt.close();
+        } catch (SQLException e) {
             return false;
-        }
-
-        for (UserDTO u : list) {
-            if (username.equalsIgnoreCase(u.getUsername())) {
-                return false;
-            }
         }
 
         return true;
     }
 
     public UserDTO auth(String username, String password) {
-        for (UserDTO u : list) {
-            if (username.equalsIgnoreCase(u.getUsername()) && password.equals(u.getPassword())) {
-                return new UserDTO(u);
+        String query = "SELECT * FROM `user` WHERE `username` = ? AND `password` = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+
+            ResultSet resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                UserDTO userDTO = new UserDTO();
+                userDTO.setId(resultSet.getInt("id"));
+                userDTO.setUsername(resultSet.getString("username"));
+                userDTO.setNickname(resultSet.getString("nickname"));
+
+                return userDTO;
             }
+
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return null;
     }
+
+    public void update(UserDTO userDTO) {
+        String query = "UPDATE `user` SET `password` = ?, `nickname` = ? WHERE `id` = ?";
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+
+            pstmt.setString(1, userDTO.getPassword());
+            pstmt.setString(2, userDTO.getNickname());
+            pstmt.setInt(3, userDTO.getId());
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int id) {
+        String query = "DELETE  FROM `user` WHERE `id` = ?";
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UserDTO selectOne(int id) {
+        UserDTO u = null;
+        String query = "SELECT * FROM `user` WHERE `id` = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            ResultSet resultSet = pstmt.executeQuery();
+            if (resultSet.next()) {
+                u = new UserDTO();
+                u.setId(resultSet.getInt("id"));
+                u.setNickname(resultSet.getString("nickname"));
+            }
+
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return u;
+    }
 }
-
-
 
 
 
