@@ -1,0 +1,19 @@
+a {
+    color: #20c997 !important;
+}
+
+.page-end {
+    color: #055160 !important;
+}
+
+.page-link.page-end {
+    color: red !important;
+}
+
+.page-link .page-end {
+    color: yellow !important;
+}
+
+a.page-end {
+    font-size: 30px;
+}

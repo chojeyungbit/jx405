@@ -58,7 +58,7 @@
     <c:set var="logIn" value="<%=logIn%>"/>
     <div class="row align-items-center vh-100  justify-content-center">
         <div class="col-10 mb-3">
-            <table class="table table-striped table-dark">
+            <table class="table table-striped table-dark" id="table-board">
                 <tr>
                     <th class="col-2">글번호</th>
                     <td class="col-10">${b.id}
@@ -98,6 +98,11 @@
                         </td>
                     </tr>
                 </c:if>
+                <tr id="tr-new-row">
+                    <td colspan="2" class="text-end" onclick="addNewRow()">
+                        새 줄 추가하기
+                    </td>
+                </tr>
             </table>
         </div>
 
@@ -134,8 +139,23 @@
         </div>
 
     </div>
+    <script>
+        let addNewRow = () => {
+            let newRow = document.getElementById('tr-new-row');
+            let table = document.getElementById('table-board');
 
+            table.children[0].removeChild(newRow);
 
+            let tr = document.createElement('tr');
+            let td = document.createElement('td');
+            td.colSpan = 2;
+
+            tr.appendChild(td);
+
+            table.children[0].appendChild(tr);
+            table.children[0].appendChild(newRow);
+        }
+    </script>
 </div>
 </body>
 </html>
