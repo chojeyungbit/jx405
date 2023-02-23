@@ -34,6 +34,26 @@ public class UserController {
         return true;
     }
 
+    public boolean validateUsername(String username) {
+        String query = "SELECT * FROM `user` WHERE `username` = ?";
+        boolean result = true;
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, username);
+            ResultSet resultSet = pstmt.executeQuery();
+            if (resultSet.next()) {
+                result = false;
+            }
+
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     public UserDTO auth(String username, String password) {
         String query = "SELECT * FROM `user` WHERE `username` = ? AND `password` = ?";
         try {
